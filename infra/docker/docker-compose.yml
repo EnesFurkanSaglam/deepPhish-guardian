@@ -1,20 +1,18 @@
-version: '3.8'
-
 services:
     auth-service:
-        build: ../backend/auth-service
+        build: ../../backend/auth-service
+        container_name: auth_service
         ports:
-            - "8000:8000"
-        environment:
-            - DATABASE_URL=postgresql://user:password@db/auth_db
+            - "5000:5000"
         depends_on:
             - db
 
     db:
         image: postgres:14
+        container_name: db_service
         environment:
-            POSTGRES_USER: user
-            POSTGRES_PASSWORD: password
-            POSTGRES_DB: auth_db
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret123
+            - POSTGRES_DB=auth_db
         ports:
             - "5432:5432"
