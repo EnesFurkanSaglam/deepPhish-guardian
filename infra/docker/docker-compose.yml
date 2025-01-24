@@ -4,6 +4,8 @@ services:
         container_name: auth_service
         ports:
             - "5000:5000"
+        environment:
+            - SECRET_KEY=mysecretkey
         depends_on:
             - db
 
@@ -16,3 +18,13 @@ services:
             - POSTGRES_DB=auth_db
         ports:
             - "5432:5432"
+
+    phishing-service:
+        build: ../../backend/phishing-service
+        container_name: phishing_service
+        ports:
+            - "6000:6000"
+        environment:
+            - SECRET_KEY=mysecretkey
+        depends_on:
+            - auth-service
