@@ -28,3 +28,13 @@ services:
             - SECRET_KEY=mysecretkey
         depends_on:
             - auth-service
+
+    deepfake-service:
+        build: ../../backend/deepfake-service
+        container_name: deepfake_service
+        ports:
+            - "7000:7000"
+        environment:
+            - SECRET_KEY=mysecretkey
+        depends_on:
+            - auth-service
