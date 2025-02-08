@@ -1,49 +1,59 @@
 version: '3.8'
 
 services:
-    auth-service:
-        build: ../../backend/auth-service
-        container_name: auth_service
-        ports:
-            - "5000:5000"
-        environment:
-            - SECRET_KEY=mysecretkey
-            - DATABASE_URL=postgresql://admin:secret123@db:5432/auth_db
-        depends_on:
-            - db
+  auth-service:
+    build: ../../backend/auth-service
+    container_name: auth_service
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=mysecretkey
+      - DATABASE_URL=postgresql://admin:secret123@db:5432/auth_db
+    depends_on:
+      db:
+        condition: service_healthy
 
-    db:
-        image: postgres:14
-        container_name: db_service
-        environment:
-            - POSTGRES_USER=admin
-            - POSTGRES_PASSWORD=secret123
-            - POSTGRES_DB=auth_db
-        ports:
-            - "5432:5432"
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U admin -d auth_db"]
-            interval: 10s
-            retries: 5
-            timeout: 5s
+  db:
+    image: postgres:14
+    container_name: db_service
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret123
+      - POSTGRES_DB=auth_db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d auth_db"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
-    phishing-service:
-        build: ../../backend/phishing-service
-        container_name: phishing_service
-        ports:
-            - "6000:6000"
-        environment:
-            - SECRET_KEY=mysecretkey
-        depends_on:
-            - auth-service
+  phishing-service:
+    build: ../../backend/phishing-service
+    container_name: phishing_service
+    ports:
+      - "6000:6000"
+    environment:
+      - SECRET_KEY=mysecretkey
+    depends_on:
+      - auth-service
 
-    deepfake-service:
-        build: ../../backend/deepfake-service
-        container_name: deepfake_service
-        ports:
-            - "7000:7000"
-        environment:
-            - SECRET_KEY=mysecretkey
-        depends_on:
-            - auth-service
+  deepfake-service:
+    build: ../../backend/deepfake-service
+    container_name: deepfake_service
+    ports:
+      - "7000:7000"
+    environment:
+      - SECRET_KEY=mysecretkey
+    depends_on:
+      - auth-service
 
+  nginx:
+    build: ../nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - phishing-service
+      - deepfake-service
