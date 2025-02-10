@@ -63,7 +63,7 @@ services:
     container_name: suricata
     network_mode: "host"
     volumes:
-      - ./infra/suricata/logs:/var/log/suricata
+      - ../suricata/logs:/var/log/suricata
     privileged: true
     cap_add:
       - NET_ADMIN
