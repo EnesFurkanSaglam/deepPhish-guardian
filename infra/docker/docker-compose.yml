@@ -57,3 +57,14 @@ services:
       - auth-service
       - phishing-service
       - deepfake-service
+
+  suricata:
+    build: ../suricata
+    container_name: suricata
+    network_mode: "host"
+    volumes:
+      - ./infra/suricata/logs:/var/log/suricata
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE   
